@@ -27,13 +27,12 @@ uses: actions/checkout@v4
     run: |
       mkdir project
       unzip -o '*.zip' -d project
-      find project -name build.gradle -exec sh -c 'sed -i "s/VERSION_1_8/VERSION_17/g" "$1"' _ {} \;
-      find project -name build.gradle.kts -exec sh -c 'sed -i "s/VERSION_1_8/VERSION_17/g" "$1"' _ {} \;
+      find project -name build.gradle -exec sed -i 's/VERSION_1_8/VERSION_17/g' {} \;
+      find project -name build.gradle.kts -exec sed -i 's/VERSION_1_8/VERSION_17/g' {} \;
 
   - name: Build APK
     run: |
       cd project
-      find . -name gradlew -type f
       gradle assembleDebug
 
   - name: Upload APK
