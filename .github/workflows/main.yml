@@ -1,0 +1,43 @@
+name: Build DOT Tunnel Plus APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '*.zip'
+      - '.github/workflows/main.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Unzip project
+        run: |
+          mkdir project
+          unzip -o *.zip -d project
+          find project -name build.gradle -o -name build.gradle.kts
+
+      - name: Build APK
+        run: |
+          cd project
+          find . -name gradlew -type f
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DOT-Tunnel-Plus-APK
+          path: project/**/build/outputs/apk/**/*.apk
